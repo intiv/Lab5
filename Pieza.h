@@ -10,10 +10,11 @@ private:
 public:
 	Pieza();
 	Pieza(int,int,bool);
+	Pieza(Pieza&);
 	bool esNegra();
 	bool esGeneral();
 	bool estaViva();
-	void CambiarColor();
+	void CambiarColor(bool);
 	void setViva(bool);
 	int getX();
 	int getY();
