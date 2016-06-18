@@ -1,0 +1,10 @@
+Damero: Inti Velasquez
+
+Cada jugador tiene un turno (el cual se intercala despues de que cada uno hace su jugada) en el cual debera ingresar las coordenadas X y Y.
+Las coordenadas Y se ingresan con las letras que aparecen al lado del tablero (a,b,c,d,e,f,g o h)
+Las coordenadas X se ingresan con los numeros que aparecen debajo del tablero (0-7)
+
+Si se ingresan coordenadas validas, los movimientos seran realizados con exito.
+De lo contrario, puede que ocurran errores en el programa (aun que la mayoria de estos problemas estan validados).
+
+Nota: A veces al comer piezas ocurre un bug en el que la pieza cambia de color, y algunas piezas se siguen imprimiendo aun que estas ya estan muertas (Dios sabra por que)

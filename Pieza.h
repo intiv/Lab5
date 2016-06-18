@@ -9,8 +9,8 @@ private:
 	bool Negra, General, viva;
 public:
 	Pieza();
+	Pieza(int,int);
 	Pieza(int,int,bool);
-	Pieza(Pieza&);
 	bool esNegra();
 	bool esGeneral();
 	bool estaViva();

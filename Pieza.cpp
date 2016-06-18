@@ -1,13 +1,18 @@
 #include "Pieza.h"
 #include<string>
-#include "ncurses.h"
+//#include<ncurses.h>
 
 using std::string;
 
-Pieza::Pieza(){
+Pieza::Pieza(int x,int y){
 	this->viva = false;
+	this->x=x;
+	this->y=y;
 }
 
+Pieza::Pieza(){
+	this->viva=false;
+}
 Pieza::Pieza(int x,int y,bool color){
 	this->x=x;
 	this->y=y;
@@ -46,33 +51,35 @@ void Pieza::setY(int y){
 	this->y=y;
 }
 
-Pieza::Pieza(Pieza& nPieza){
-	this->x=nPieza.getX();
-	this->y=nPieza.getY();
-	this->Negra=nPieza.esNegra();	
-	this->viva=nPieza.estaViva();
-}
-
-bool Pieza::mover(int x,int y,Pieza** &matriz){
+bool Pieza::mover(int y,int x,Pieza** &matriz){
 	// return matriz[x][y].estaViva();
+	if(!viva){
+		return false;
+	}
+//	mvprintw(30,45,"thisy: %d,thisx: %d,y: %d,x: %d,thisviva: %d,yxviva: %d",this->y,this->x,y,x,this->viva,matriz[y][x].viva);
+//	mvprintw(31,45,"this negra: %d, xynegra: %d",this->Negra,matriz[y][x].Negra);
+//	getch();
  	if(!Negra&&!General){
-		mvprintw(35,65,"Entro a !negra !general");
-		mvprintw(36,65,"%d\t%d\t%d",x,y,matriz[x][y].estaViva());
  		if(x>=8||y>=8||x<0||y<0){
  			return false;
-			mvprintw(36,65,"Entro a x>=8 y>=8 etc");
  		}else if(this->x==x&&this->y==y){
  			return false;
-			mvprintw(36,65,"Entro a x=x y=y etc");
- 		}else if((x==this->x+1||x==this->x-1)&&(y==this->y+1)/*&&!matriz[x][y].estaViva()*/){
-			matriz[x][y]=Pieza(*this);
-			mvprintw(36,65,"Entro a x=this x+1/x-1 y=this y-1  xy!viva");
-			this->setViva(false);
+ 		}else if( (x + 1==this->x||x-1==this->x)&&(y-1==this->y)&&!matriz[y][x].estaViva()){
+			matriz[y][x].setViva(true);
+			matriz[y][x].CambiarColor(this->Negra);
+			setViva(false);
  			return true;
- 		}else if((x==this->x+2&&y==this->y+2&&!matriz[this->y+1][this->x+1].esNegra()&&!matriz[y][x].estaViva())||(x==this->x-2&&y==this->y+2&&!matriz[this->y-1][this->x+1].esNegra()&&!matriz[y][x].estaViva())){
- 			matriz[x][y].setViva(true);
-			mvprintw(36,65,"Entro a x=this x+2 y=this y+2  xy!viva");
-			matriz[x][y].CambiarColor(this->Negra);
+ 		}else if((x==this->x+2&&y==this->y+2&&matriz[this->y+1][this->x+1].esNegra()&&matriz[y-1][x-1].estaViva()&&!matriz[y][x].estaViva())){
+ 			matriz[y][x].setViva(true);
+			matriz[y][x].CambiarColor(!Negra);
+			matriz[y-1][x-1].setViva(false);
+			setViva(false);
+			return true;
+	
+ 		}else if((x==this->x-2&&y==this->y+2&&matriz[this->y+1][this->x-1].esNegra()&&matriz[y-1][x+1].estaViva()&&!matriz[y][x].estaViva())){
+ 			matriz[y][x].setViva(true);
+			matriz[y][x].CambiarColor(!Negra);
+			matriz[y-1][x+1].setViva(false);
 			setViva(false);
 			return true;
  		}else{
@@ -81,26 +88,35 @@ bool Pieza::mover(int x,int y,Pieza** &matriz){
  	}else if(Negra&&!General){
  		if(x>=8||y>=8||x<0||y<0){
                          return false;
-                 }else if(this->x==x&&this->y==y){
+                }else if(this->x==x&&this->y==y){
                          return false;
-                 }else if( (x==this->x+1||x==this->x-1)&&(y==this->y-1)&&!matriz[y][x].viva){
-			matriz[x][y].setViva(true);
-			matriz[x][y].CambiarColor(Negra);
+ 		}else if( (x + 1==this->x||x-1==this->x)&&(y+1==this->y)&&!matriz[y][x].estaViva()){
+			matriz[y][x].setViva(true);
+			matriz[y][x].CambiarColor(this->Negra);
 			setViva(false);
-                        return true;
-                 }else if( (x==this->x+2&&y==this->y-2&&!matriz[this->y-1][this->x+1].esNegra()&&!matriz[y][x].viva)||(x==this->x-2&&y==this->y-2&&matriz[this->y-1][this->x+1].esNegra()&&!matriz[y][x].viva)){
-			matriz[x][y].setViva(true);
-			matriz[x][y].CambiarColor(Negra);
-			setViva(false);
-                 	return true;
-                 }else{
-                        return false;
-                 }
+ 		}else if((x==this->x+2&&y==this->y-2&&!matriz[this->y-1][this->x+1].esNegra()&&matriz[y+1][x-1].estaViva()&&!matriz[y][x].estaViva())){
+ 			 matriz[y][x].setViva(true);
+		 	 matriz[y][x].CambiarColor(!Negra);
+			 matriz[y+1][x-1].setViva(false);
+			 setViva(false);
+			 return true;
+ 		}else if((x==this->x-2&&y==this->y-2&&!matriz[this->y-1][this->x-1].esNegra()&&matriz[y+1][x+1].estaViva()&&!matriz[y][x].estaViva())){
+ 			 matriz[y][x].setViva(true);
+			 matriz[y][x].CambiarColor(!Negra);
+			 matriz[y+1][x+1].setViva(false);
+			 setViva(false);
+			 return true;
+                }else{
+                         return false;
+                }
 
  	}
  }
 
+
+
 void Pieza::CambiarColor(bool negra){
 	this->Negra=negra;
+
 }
 
